@@ -3,6 +3,7 @@
   width: 560px;
   height: 300px;
   border: solid black 1px;
+  margin: 50px;
 }
 
 .block {
@@ -25,6 +26,4 @@
   height: 20px;
   border-radius: 10px;
   background-color: red;
-  left: 270px;
-  bottom: 30px;
 }

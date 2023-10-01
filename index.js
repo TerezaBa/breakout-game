@@ -1,9 +1,14 @@
 const grid = document.querySelector(".grid");
+const scoreDisplay = document.querySelector(".score");
 
 let timerId;
+let xDirection = -2;
+let yDirection = 2;
 const blockWidth = 100;
 const blockHeight = 20;
 const boardWidth = 560;
+const boardHeight = 300;
+const ballDiameter = 20;
 
 const userStart = [230, 10];
 let currentUserPosition = userStart;
@@ -101,9 +106,63 @@ function drawBall() {
 
 // move ball
 function moveBall() {
-  currentBallPosition[0] += 2;
-  currentBallPosition[1] += 2;
+  currentBallPosition[0] += xDirection;
+  currentBallPosition[1] += yDirection;
   drawBall();
+  checkForCollisions();
 }
 
-timerId = setInterval(moveBall, 30);
+timerId = setInterval(moveBall, 60);
+
+// check for collisions
+function changeDirection() {
+  if (xDirection === 2 && yDirection === 2) {
+    yDirection = -2;
+    return;
+  }
+  if (xDirection === 2 && yDirection === -2) {
+    xDirection = -2;
+    return;
+  }
+  if (xDirection === -2 && yDirection === -2) {
+    yDirection = 2;
+    return;
+  }
+  if (xDirection === -2 && yDirection === 2) {
+    xDirection = 2;
+    return;
+  }
+}
+
+function checkForCollisions() {
+  // block collision
+  for (let i = 0; i < blocks.length; i++) {
+    if (
+      currentBallPosition[0] + ballDiameter > blocks[i].bottomLeft[0] &&
+      currentBallPosition[0] < blocks[i].bottomRight[0] &&
+      currentBallPosition[1] + ballDiameter > blocks[i].bottomLeft[1] &&
+      currentBallPosition[1] < blocks[i].topLeft[1]
+    ) {
+      const allBLocks = Array.from(document.querySelectorAll(".block"));
+      allBLocks[i].classList.remove("block");
+      blocks.splice(i, 1);
+      changeDirection();
+    }
+  }
+
+  // wall collisions
+  if (
+    currentBallPosition[0] >= boardWidth - ballDiameter ||
+    currentBallPosition[1] >= boardHeight - ballDiameter ||
+    currentBallPosition[0] <= 0
+  ) {
+    changeDirection();
+  }
+
+  // game over
+  if (currentBallPosition[1] <= 0) {
+    clearInterval(timerId);
+    scoreDisplay.innerHTML = "You lose";
+    document.removeEventListener("keydown", moveUser);
+  }
+}
