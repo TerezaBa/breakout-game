@@ -113,8 +113,6 @@ function moveBall() {
   checkForCollisions();
 }
 
-timerId = setInterval(moveBall, 30);
-
 // check for collisions
 function changeDirection() {
   if (xDirection === 2 && yDirection === 2) {
@@ -186,3 +184,12 @@ function checkForCollisions() {
     document.removeEventListener("keydown", moveUser);
   }
 }
+
+// reset button
+function startGame() {
+  timerId = setInterval(moveBall, 30);
+}
+
+clearInterval(timerId);
+const button = document.querySelector(".play");
+button.addEventListener("click", startGame);
