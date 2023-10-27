@@ -2,8 +2,9 @@ const grid = document.querySelector(".grid");
 const scoreDisplay = document.querySelector(".score");
 
 let timerId;
-let xDirection = -2;
+let xDirection = 2;
 let yDirection = 2;
+let score = 0;
 const blockWidth = 100;
 const blockHeight = 20;
 const boardWidth = 560;
@@ -112,7 +113,7 @@ function moveBall() {
   checkForCollisions();
 }
 
-timerId = setInterval(moveBall, 60);
+timerId = setInterval(moveBall, 30);
 
 // check for collisions
 function changeDirection() {
@@ -147,7 +148,26 @@ function checkForCollisions() {
       allBLocks[i].classList.remove("block");
       blocks.splice(i, 1);
       changeDirection();
+      score += 1000000;
+      scoreDisplay.innerHTML = score;
+
+      // check for win
+      if (blocks.length === 0) {
+        scoreDisplay.innerHTML = `YOU WIN! 🎉 </br><small>Score: ${score}</small>`;
+        clearInterval(timerId);
+        document.removeEventListener("keydown", moveUser);
+      }
     }
+  }
+
+  //user collisions
+  if (
+    currentBallPosition[0] > currentUserPosition[0] &&
+    currentBallPosition[0] < currentUserPosition[0] + blockWidth &&
+    currentBallPosition[1] > currentUserPosition[1] &&
+    currentBallPosition[1] < currentUserPosition[1] + blockHeight
+  ) {
+    changeDirection();
   }
 
   // wall collisions
@@ -162,7 +182,7 @@ function checkForCollisions() {
   // game over
   if (currentBallPosition[1] <= 0) {
     clearInterval(timerId);
-    scoreDisplay.innerHTML = "You lose";
+    scoreDisplay.innerHTML = `You lose. 😔 </br><small>Score: ${score}</small> `;
     document.removeEventListener("keydown", moveUser);
   }
 }
